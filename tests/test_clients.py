@@ -51,7 +51,7 @@ class TestClients(unittest.TestCase):
             ipv4_compatible=False,
         )
 
-        writer.insert_network(IPSet(["1.0.0.0/8"]), self.origin_data.dict())
+        writer.insert_network(["1.0.0.0/8"], self.origin_data.dict())
 
         # insert other useless record
         for i in range(2, 250):
