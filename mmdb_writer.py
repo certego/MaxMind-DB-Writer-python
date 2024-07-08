@@ -9,6 +9,7 @@ from enum import IntEnum
 from typing import Dict, List, Literal, Union
 
 from netaddr import IPNetwork, IPSet
+from netaddr.core import AddrFormatError
 
 
 class MmdbBaseType:
@@ -600,13 +601,13 @@ class MMDBWriter:
         self.int_type = int_type
         self.float_type = float_type
 
-    def insert_network(self, network: IPSet, content: MMDBType):
+    def insert_network(self, network: IPSet | str, content: MMDBType):
         """
         Inserts a network into the MaxMind database.
 
         Args:
            network: The network to be inserted. It should be an instance of
-                    netaddr.IPSet.
+                    netaddr.IPSet or a string representing a IPSet compatible value.
            content: The content associated with the network. It can be a
                     dictionary, list, string, bytes, integer, or boolean.
 
@@ -621,7 +622,12 @@ class MMDBWriter:
            This method modifies the internal tree structure of the MMDBWriter instance.
         """
         leaf = SearchTreeLeaf(content)
-        if not isinstance(network, IPSet):
+        if isinstance(network, str):
+            try:
+                network = IPSet([network])
+            except AddrFormatError:
+                raise ValueError(f"{network} type should be compatible with netaddr.IPSet.")
+        elif not isinstance(network, IPSet):
             raise ValueError("network type should be netaddr.IPSet.")
         network = network.iter_cidrs()
         for cidr in network:
