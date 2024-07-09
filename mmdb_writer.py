@@ -601,7 +601,7 @@ class MMDBWriter:
         self.int_type = int_type
         self.float_type = float_type
 
-    def insert_network(self, network: IPSet | str, content: MMDBType):
+    def insert_network(self, network: Union[IPSet, str], content: MMDBType):
         """
         Inserts a network into the MaxMind database.
 
